@@ -1,6 +1,6 @@
 package com.yeuristic.mymvi
 
-class UserData(
+data class UserData(
     val name: String,
     val age: Int,
     val photoUrl: String

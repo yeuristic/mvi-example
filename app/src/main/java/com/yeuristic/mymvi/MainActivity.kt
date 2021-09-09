@@ -3,6 +3,7 @@ package com.yeuristic.mymvi
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -12,6 +13,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,11 +31,13 @@ import com.yeuristic.mymvi.ui.theme.MyMviTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val viewModel: MainViewModel by viewModels()
+
         setContent {
             MyMviTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = Gray200) {
-                    MainScreen(mainModel = Mocker.mockMainModel())
+                    MainScreen(mainViewModel = viewModel)
                 }
             }
         }
@@ -40,8 +45,17 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MainScreen(mainModel: MainModel) {
+fun MainScreen(mainViewModel: MainViewModel) {
+
+    val mainModel by mainViewModel.model.observeAsState(Mocker.mockMainModel(true))
+
     Column {
+        Button(onClick = { mainViewModel.intent(MainViewModel.Intent.FetchData) }) {
+
+        }
+        Button(onClick = { mainViewModel.intent(MainViewModel.Intent.FetchUser) }) {
+
+        }
         if (mainModel.isLoading) {
             LoadingScreen()
         } else {
@@ -127,7 +141,7 @@ fun ItemCard(item: Item, modifier: Modifier = Modifier) {
 fun DefaultPreview() {
     MyMviTheme {
         Surface(color = Gray200) {
-            MainScreen(mainModel = Mocker.mockMainModel(false))
+            MainScreen(mainViewModel = MainViewModel())
         }
     }
 }
